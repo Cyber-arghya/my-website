@@ -1,0 +1,8 @@
+services:
+  website:
+    build: .
+    ports:
+      - "8080:80"  # Map PC's 8080 to Container's 80
+    volumes:
+      - .:/usr/share/nginx/html # Hot Reload!
+
