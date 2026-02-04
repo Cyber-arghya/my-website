@@ -4,45 +4,47 @@ on:
   push:
     branches: ["main"]
 
-# Grants permission to write to your repository (required for publishing)
 permissions:
   contents: read
   pages: write
   id-token: write
 
 jobs:
-  # Job 1: Test the Docker Build (CI)
   test-build:
     runs-on: ubuntu-latest
     steps:
+      # UPGRADE: v3 -> v4
       - name: Checkout Code
-        uses: actions/checkout@v3
-
+        uses: actions/checkout@v4
+      
       - name: Build Docker Image
         run: docker build . -t my-website
-
+        
       - name: Test Run
         run: docker run -d -p 8080:80 my-website && sleep 5 && curl localhost:8080
 
-  # Job 2: Deploy to GitHub Pages (CD)
   deploy:
-    needs: test-build # Only deploy if Docker build passes!
+    needs: test-build
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
+      # UPGRADE: v3 -> v4
       - name: Checkout
-        uses: actions/checkout@v3
-
+        uses: actions/checkout@v4
+        
+      # UPGRADE: v3 -> v5
       - name: Setup Pages
-        uses: actions/configure-pages@v3
-
+        uses: actions/configure-pages@v5
+        
+      # UPGRADE: v2 -> v3 (This was the main cause of your error)
       - name: Upload Artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
-
+          
+      # UPGRADE: v2 -> v4
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
